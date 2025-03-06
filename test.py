@@ -10,7 +10,7 @@ print(p)
 # Result should be = 0.0026643247488
 
 
-key = (0,1,1)
-print(probab(*key))
-key = (1,0,1)
-print(probab(*key))
+#key = (0,1,1)
+#print(probab(*key))
+#key = (1,0,1)
+#print(probab(*key))

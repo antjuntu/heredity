@@ -136,6 +136,7 @@ def powerset(s):
     ]
 
 def probab(mother_genes, father_genes, child_genes):
+    print(f"({mother_genes, father_genes, child_genes})")
     """
     Return probability of number of child genes given
     number of mother and father genes
@@ -180,8 +181,6 @@ def probab(mother_genes, father_genes, child_genes):
     return prob[key]
 
 
-    return None
-
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
     Compute and return a joint probability.
@@ -193,8 +192,58 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    pass
-
+    print('people dict:')
+    print(people)
+    names = set(people.keys())
+    #print('Names:', names)
+    zero_genes = names - one_gene - two_genes
+    print('Zero genes', zero_genes)
+    print('One gene', one_gene)
+    print('Two genes', two_genes)
+    n_genes_dict = dict()
+    for n in zero_genes:
+        n_genes_dict[n] = 0
+    for n in one_gene:
+        n_genes_dict[n] = 1
+    for n in two_genes:
+        n_genes_dict[n] = 2
+    print('n_genes_dict:')
+    print(n_genes_dict)
+    no_trait = names - have_trait
+    print('Have trait', have_trait)
+    print('No trait', no_trait)
+    p = 1
+    print('Names:')
+    i = 0
+    for name in list(names):
+        i += 1
+        print(f"{i}: {name}")
+        # How many genes?
+        print('Genes:', n_genes_dict[name])
+        # Have trait?
+        trait = True if name in have_trait else False
+        print('Have trait:', trait)
+        # Are there parents of name?
+        mother = people[name]['mother']
+        father = people[name]['father']
+        print(f"mother: {mother}, father: {father}")
+        #pr_gene = 1
+        if not mother:
+            print('No parents listed.')
+            pr_gene = PROBS["gene"][n_genes_dict[name]]
+            print('pr_gene', pr_gene)
+        else:
+            print('Parents listed.')
+            pr_gene = probab(n_genes_dict[mother], n_genes_dict[father], n_genes_dict[name])
+            print('pr_gene', pr_gene)
+        p *= pr_gene
+        #pr_trait = 1
+        pr_trait = PROBS['trait'][n_genes_dict[name]][trait]
+        print('pr_trait', pr_trait)
+        p *= pr_trait
+        
+        print('- - - - - -')
+    return p
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
     """
