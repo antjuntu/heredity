@@ -2,6 +2,8 @@ import csv
 import itertools
 import sys
 
+# python heredity.py data\family0.csv
+
 PROBS = {
 
     # Unconditional probabilities for having gene
@@ -43,7 +45,8 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python heredity.py data.csv")
     people = load_data(sys.argv[1])
-
+    print('people:')
+    print(people)
     # Keep track of gene and trait probabilities for each person
     probabilities = {
         person: {
@@ -62,6 +65,7 @@ def main():
 
     # Loop over all sets of people who might have the trait
     names = set(people)
+    
     for have_trait in powerset(names):
 
         # Check if current set of people violates known information
@@ -78,8 +82,12 @@ def main():
             for two_genes in powerset(names - one_gene):
 
                 # Update probabilities with new joint probability
+                print('have_trait', have_trait)
+                print('one_gene', one_gene)
+                print('two_genes', two_genes)
                 p = joint_probability(people, one_gene, two_genes, have_trait)
                 update(probabilities, one_gene, two_genes, have_trait, p)
+                print('- - - - - - - - - -')
 
     # Ensure probabilities sum to 1
     normalize(probabilities)
@@ -127,6 +135,52 @@ def powerset(s):
         )
     ]
 
+def probab(mother_genes, father_genes, child_genes):
+    """
+    Return probability of number of child genes given
+    number of mother and father genes
+    """
+    # Probabilities that child gets gene from parent
+    # parent has 0 genes
+    p_from_0_to_1 = 0.01
+    # parent has 1 genes
+    p_from_1_to_1 = 0.5
+    # parent has 2 genes
+    p_from_2_to_1 = 0.99
+    
+    # Dictionary that map keys (mother_genes, father_genes, child_genes) to probability
+    prob = {
+        (0,0,0) : 0.99 * 0.99,
+        (0,0,1) : 0.01 * 0.99 + 0.99 * 0.01,
+        (0,0,2) : 0.01 * 0.01,
+
+        (0,1,0) : 0.99 * 0.5,
+        (0,1,1) : 0.01 * 0.5 + 0.99 * 0.5,
+        (0,1,2) : 0.01 * 0.5,
+
+        (1,1,0) : 0.5 * 0.5,
+        (1,1,1) : 0.5 * 0.5 + 0.5 * 0.5,
+        (1,1,2) : 0.5 * 0.5,
+
+        (0,2,0) : 0.99 * 0.01,
+        (0,2,1) : 0.99 * 0.99 + 0.01 * 0.01,
+        (0,2,2) : 0.01 * 0.99,
+
+        (1,2,0) : 0.5 * 0.01,
+        (1,2,1) : 0.5 * 0.01 + 0.5 * 0.99,
+        (1,2,2) : 0.5 * 0.99,
+
+        (2,2,0) : 0.01 * 0.01,
+        (2,2,1) : 0.99 * 0.01 + 0.01 * 0.99,
+        (2,2,2) : 0.99 * 0.99 
+    }
+    key =  (mother_genes, father_genes, child_genes)
+    if key not in prob:
+        key = (father_genes, mother_genes, child_genes)
+    return prob[key]
+
+
+    return None
 
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
@@ -139,7 +193,7 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    raise NotImplementedError
+    pass
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
@@ -149,7 +203,7 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    raise NotImplementedError
+    pass
 
 
 def normalize(probabilities):
